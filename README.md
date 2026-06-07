@@ -1,73 +1,74 @@
-# React + TypeScript + Vite
+# Admin Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack admin dashboard built with React, TypeScript, and Supabase. Admins can create organizations, invite members, and manage everything from one place.
 
-Currently, two official plugins are available:
+## Live URLs
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Production:** https://admin-dashboard-flame-seven-66.vercel.app
+- **Preview:** https://admin-dashboard-git-development-abidmuhammadali0-6415s-projects.vercel.app
 
-## React Compiler
+## Test Credentials
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Email:** abidmuhammadali0@gmail.com
+- **Password:** [your password here]
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- React 18 + TypeScript
+- Vite
+- Tailwind CSS
+- Supabase (Auth, Database, Edge Functions)
+- TanStack React Query
+- React Router v6
+- React Hook Form + Zod
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Features
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- Admin authentication (signup/login/logout)
+- Create organizations with 3 types (School, Nonprofit, Business)
+- Conditional fields based on organization type
+- Invite members by email
+- Members list with invited/active status
+- Organization directory with type badges
+- Supabase Edge Function for secure member invitations
+- Row Level Security on all tables
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Branching Strategy
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- `main` → Production (deployed to Production URL)
+- `development` → Active development (deployed to Preview URL)
+- Feature branches → branched off development, merged via Pull Request
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Setup Instructions
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1. Clone the repository
+   git clone https://github.com/abidmuhammadali/admin-dashboard.git
+
+2. Install dependencies
+   npm install
+
+3. Copy environment variables
+   cp .env.example .env.local
+
+4. Fill in your Supabase credentials in .env.local
+
+5. Run the development server
+   npm run dev
+
+## Database Setup
+
+Run the SQL in supabase/migrations/schema.sql against your Supabase project.
+
+## Shortcuts & Tradeoffs
+
+- Used direct Supabase client for most operations, Edge Function only for invitations
+- No email sending implemented — invitation records saved to database only
+- No acceptance flow for invitations implemented
+
+## What I Would Do With More Time
+
+- Add invitation acceptance flow
+- Add search and filter on organizations
+- Add role based permissions within organizations
+- Add end to end tests with Playwright
+- Add dark mode toggle
