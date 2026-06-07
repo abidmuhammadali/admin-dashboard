@@ -44,7 +44,8 @@ export default function DashboardPage() {
               style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)' }}>
               <span className="text-sm">⚡</span>
             </div>
-            <h1 className="text-xl font-bold text-white">Admin Dashboard</h1>
+            <Link to="/" className="text-xl font-bold text-white hover:text-purple-300 transition-colors">
+             Admin Dashoard</Link>
           </div>
           <div className="flex items-center gap-4">
             <span className="text-purple-300 text-sm">{user?.email}</span>
