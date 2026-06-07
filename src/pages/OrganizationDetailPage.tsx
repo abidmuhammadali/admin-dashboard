@@ -61,7 +61,6 @@ export default function OrganizationDetailPage() {
     setInviteLoading(true)
     setInviteError('')
     setInviteSuccess('')
-
     const { error } = await supabase
       .from('organization_members')
       .insert({
@@ -70,7 +69,6 @@ export default function OrganizationDetailPage() {
         status: 'invited',
         role: 'member'
       })
-
     if (error) {
       if (error.code === '23505') {
         setInviteError('This email has already been invited!')
@@ -85,12 +83,12 @@ export default function OrganizationDetailPage() {
     setInviteLoading(false)
   }
 
-  function getTypeBadgeColor(type: string) {
+  function getTypeBadge(type: string) {
     switch (type) {
-      case 'School': return 'bg-blue-100 text-blue-800'
-      case 'Nonprofit': return 'bg-green-100 text-green-800'
-      case 'Business': return 'bg-purple-100 text-purple-800'
-      default: return 'bg-gray-100 text-gray-800'
+      case 'School': return 'bg-blue-500 bg-opacity-20 text-blue-300 border border-blue-500 border-opacity-30'
+      case 'Nonprofit': return 'bg-green-500 bg-opacity-20 text-green-300 border border-green-500 border-opacity-30'
+      case 'Business': return 'bg-purple-500 bg-opacity-20 text-purple-300 border border-purple-500 border-opacity-30'
+      default: return 'bg-gray-500 bg-opacity-20 text-gray-300'
     }
   }
 
@@ -100,27 +98,34 @@ export default function OrganizationDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+    <div className="min-h-screen relative overflow-hidden"
+      style={{ background: 'linear-gradient(135deg, #0f0a1e 0%, #1a0533 50%, #0f0a1e 100%)' }}>
+
+      <div className="absolute top-0 right-0 w-96 h-96 rounded-full opacity-10"
+        style={{ background: 'radial-gradient(circle, #7c3aed, transparent)' }} />
+
+      {/* Header */}
+      <header className="relative z-10 border-b border-purple-900"
+        style={{ background: 'rgba(255,255,255,0.03)' }}>
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link to="/organizations" className="text-blue-600 hover:underline text-sm">
+            <Link to="/organizations" className="text-purple-300 hover:text-white text-sm transition-colors">
               ← Back
             </Link>
-            <h1 className="text-xl font-bold text-gray-900">
-              {org?.name}
-            </h1>
-            {org?.type && (
-              <span className={`px-3 py-1 rounded-full text-xs font-medium ${getTypeBadgeColor(org.type)}`}>
-                {org.type}
-              </span>
-            )}
+            <div className="flex items-center gap-3">
+              <h1 className="text-xl font-bold text-white">{org?.name}</h1>
+              {org?.type && (
+                <span className={`px-3 py-1 rounded-full text-xs font-medium ${getTypeBadge(org.type)}`}>
+                  {org.type}
+                </span>
+              )}
+            </div>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-600">{user?.email}</span>
+            <span className="text-purple-300 text-sm">{user?.email}</span>
             <button
               onClick={handleLogout}
-              className="bg-red-500 text-white px-4 py-2 rounded-md text-sm hover:bg-red-600"
+              className="px-4 py-2 rounded-xl text-sm text-white border border-purple-700 hover:border-purple-400 transition-all"
             >
               Sign Out
             </button>
@@ -128,44 +133,60 @@ export default function OrganizationDetailPage() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <main className="relative z-10 max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 gap-6 lg:grid-cols-3">
+
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Organization Details
-            </h2>
-            <div className="space-y-2 text-sm text-gray-600">
-              <p><span className="font-medium">Type:</span> {org?.type}</p>
-              <p><span className="font-medium">Description:</span> {org?.description || 'No description'}</p>
+          {/* Org Details */}
+          <div className="rounded-2xl p-6 border border-purple-900"
+            style={{ background: 'rgba(255,255,255,0.05)' }}>
+            <h2 className="text-lg font-semibold text-white mb-4">Organization Details</h2>
+            <div className="space-y-3 text-sm">
+              <div className="flex gap-2">
+                <span className="text-purple-400 w-32">Type</span>
+                <span className="text-white">{org?.type}</span>
+              </div>
+              <div className="flex gap-2">
+                <span className="text-purple-400 w-32">Description</span>
+                <span className="text-white">{org?.description || 'No description'}</span>
+              </div>
               {org?.school_district && (
-                <p><span className="font-medium">School District:</span> {org.school_district}</p>
+                <div className="flex gap-2">
+                  <span className="text-purple-400 w-32">School District</span>
+                  <span className="text-white">{org.school_district}</span>
+                </div>
               )}
-              <p><span className="font-medium">Created:</span> {org?.created_at ? new Date(org.created_at).toLocaleDateString() : ''}</p>
+              <div className="flex gap-2">
+                <span className="text-purple-400 w-32">Created</span>
+                <span className="text-white">{org?.created_at ? new Date(org.created_at).toLocaleDateString() : ''}</span>
+              </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          {/* Members */}
+          <div className="rounded-2xl p-6 border border-purple-900"
+            style={{ background: 'rgba(255,255,255,0.05)' }}>
+            <h2 className="text-lg font-semibold text-white mb-4">
               Members ({members?.length || 0})
             </h2>
 
             {members?.length === 0 && (
-              <p className="text-gray-500 text-sm">No members yet. Invite someone!</p>
+              <p className="text-purple-400 text-sm">No members yet. Invite someone!</p>
             )}
 
             <div className="space-y-3">
               {members?.map((member) => (
-                <div key={member.id} className="flex items-center justify-between py-2 border-b last:border-0">
-                  <span className="text-sm text-gray-900">{member.email}</span>
+                <div key={member.id}
+                  className="flex items-center justify-between py-3 border-b border-purple-900 last:border-0">
+                  <span className="text-white text-sm">{member.email}</span>
                   <div className="flex items-center gap-2">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                       member.status === 'active'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-yellow-100 text-yellow-800'
+                        ? 'bg-green-500 bg-opacity-20 text-green-300'
+                        : 'bg-yellow-500 bg-opacity-20 text-yellow-300'
                     }`}>
                       {member.status}
                     </span>
-                    <span className="text-xs text-gray-400">{member.role}</span>
+                    <span className="text-purple-400 text-xs">{member.role}</span>
                   </div>
                 </div>
               ))}
@@ -173,33 +194,33 @@ export default function OrganizationDetailPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6 h-fit">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Invite Member
-          </h2>
+        {/* Invite Form */}
+        <div className="rounded-2xl p-6 border border-purple-900 h-fit"
+          style={{ background: 'rgba(255,255,255,0.05)' }}>
+          <h2 className="text-lg font-semibold text-white mb-4">Invite Member</h2>
 
           {inviteError && (
-            <div className="bg-red-50 text-red-600 p-3 rounded mb-4 text-sm">
+            <div className="bg-red-500 bg-opacity-20 border border-red-500 text-red-300 p-3 rounded-lg mb-4 text-sm">
               {inviteError}
             </div>
           )}
-
           {inviteSuccess && (
-            <div className="bg-green-50 text-green-600 p-3 rounded mb-4 text-sm">
+            <div className="bg-green-500 bg-opacity-20 border border-green-500 text-green-300 p-3 rounded-lg mb-4 text-sm">
               {inviteSuccess}
             </div>
           )}
 
           <form onSubmit={handleInvite} className="space-y-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-white mb-2">
                 Email Address
               </label>
               <input
                 type="email"
                 value={inviteEmail}
                 onChange={(e) => setInviteEmail(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-xl px-4 py-3 text-white placeholder-purple-400 border border-purple-700 focus:outline-none focus:border-purple-400 text-sm"
+                style={{ background: 'rgba(255,255,255,0.07)' }}
                 placeholder="member@example.com"
                 required
               />
@@ -207,9 +228,10 @@ export default function OrganizationDetailPage() {
             <button
               type="submit"
               disabled={inviteLoading}
-              className="w-full bg-blue-600 text-white py-2 rounded-md text-sm hover:bg-blue-700 disabled:opacity-50"
+              className="w-full py-3 rounded-xl font-medium text-white transition-all disabled:opacity-50"
+              style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)' }}
             >
-              {inviteLoading ? 'Inviting...' : 'Send Invitation'}
+              {inviteLoading ? 'Inviting...' : 'Send Invitation →'}
             </button>
           </form>
         </div>

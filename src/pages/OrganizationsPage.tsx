@@ -9,14 +9,13 @@ interface Organization {
   type: string
   description: string
   created_at: string
-  member_count?: number
 }
 
 export default function OrganizationsPage() {
   const { user } = useAuth()
   const navigate = useNavigate()
 
-  const { data: organizations, isLoading, error } = useQuery({
+  const { data: organizations, isLoading } = useQuery({
     queryKey: ['organizations', user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -24,19 +23,18 @@ export default function OrganizationsPage() {
         .select('*')
         .eq('created_by', user?.id)
         .order('created_at', { ascending: false })
-
       if (error) throw error
       return data as Organization[]
     },
     enabled: !!user
   })
 
-  function getTypeBadgeColor(type: string) {
+  function getTypeBadge(type: string) {
     switch (type) {
-      case 'School': return 'bg-blue-100 text-blue-800'
-      case 'Nonprofit': return 'bg-green-100 text-green-800'
-      case 'Business': return 'bg-purple-100 text-purple-800'
-      default: return 'bg-gray-100 text-gray-800'
+      case 'School': return 'bg-blue-500 bg-opacity-20 text-blue-300 border border-blue-500 border-opacity-30'
+      case 'Nonprofit': return 'bg-green-500 bg-opacity-20 text-green-300 border border-green-500 border-opacity-30'
+      case 'Business': return 'bg-purple-500 bg-opacity-20 text-purple-300 border border-purple-500 border-opacity-30'
+      default: return 'bg-gray-500 bg-opacity-20 text-gray-300'
     }
   }
 
@@ -46,15 +44,28 @@ export default function OrganizationsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-bold text-gray-900">Organizations</h1>
+    <div className="min-h-screen relative overflow-hidden"
+      style={{ background: 'linear-gradient(135deg, #0f0a1e 0%, #1a0533 50%, #0f0a1e 100%)' }}>
+
+      <div className="absolute top-0 right-0 w-96 h-96 rounded-full opacity-10"
+        style={{ background: 'radial-gradient(circle, #7c3aed, transparent)' }} />
+
+      {/* Header */}
+      <header className="relative z-10 border-b border-purple-900"
+        style={{ background: 'rgba(255,255,255,0.03)' }}>
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center"
+              style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)' }}>
+              <span className="text-sm">⚡</span>
+            </div>
+            <h1 className="text-xl font-bold text-white">Admin Dashboard</h1>
+          </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-600">{user?.email}</span>
+            <span className="text-purple-300 text-sm">{user?.email}</span>
             <button
               onClick={handleLogout}
-              className="bg-red-500 text-white px-4 py-2 rounded-md text-sm hover:bg-red-600"
+              className="px-4 py-2 rounded-xl text-sm text-white border border-purple-700 hover:border-purple-400 transition-all"
             >
               Sign Out
             </button>
@@ -62,39 +73,39 @@ export default function OrganizationsPage() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold text-gray-900">
-            Your Organizations
-          </h2>
+      <main className="relative z-10 max-w-7xl mx-auto px-6 py-12">
+        <div className="flex items-center justify-between mb-10">
+          <div>
+            <h2 className="text-4xl font-bold text-white mb-2">Organizations</h2>
+            <p className="text-purple-300">Manage all your organizations</p>
+          </div>
           <Link
             to="/organizations/create"
-            className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-700"
+            className="px-6 py-3 rounded-xl font-medium text-white"
+            style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)' }}
           >
-            + Create Organization
+            + Create New
           </Link>
         </div>
 
         {isLoading && (
-          <div className="text-center py-12 text-gray-500">
+          <div className="text-center py-20 text-purple-300">
             Loading organizations...
           </div>
         )}
 
-        {error && (
-          <div className="bg-red-50 text-red-600 p-4 rounded-lg">
-            Error loading organizations
-          </div>
-        )}
-
         {!isLoading && organizations?.length === 0 && (
-          <div className="text-center py-12 bg-white rounded-lg shadow">
-            <p className="text-gray-500 mb-4">No organizations yet</p>
+          <div className="text-center py-20 rounded-2xl border border-purple-900"
+            style={{ background: 'rgba(255,255,255,0.03)' }}>
+            <p className="text-4xl mb-4">🏢</p>
+            <p className="text-white text-xl font-semibold mb-2">No organizations yet</p>
+            <p className="text-purple-300 mb-6">Create your first organization to get started</p>
             <Link
               to="/organizations/create"
-              className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-700"
+              className="px-6 py-3 rounded-xl font-medium text-white"
+              style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)' }}
             >
-              Create your first organization
+              Create Organization
             </Link>
           </div>
         )}
@@ -104,22 +115,19 @@ export default function OrganizationsPage() {
             <div
               key={org.id}
               onClick={() => navigate(`/organizations/${org.id}`)}
-              className="bg-white rounded-lg shadow p-6 cursor-pointer hover:shadow-md transition-shadow"
+              className="rounded-2xl p-6 border border-purple-900 cursor-pointer transition-all hover:border-purple-500"
+              style={{ background: 'rgba(255,255,255,0.05)' }}
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    {org.name}
-                  </h3>
-                  <p className="text-gray-500 text-sm mt-1">
-                    {org.description}
-                  </p>
+                  <h3 className="text-lg font-semibold text-white mb-1">{org.name}</h3>
+                  <p className="text-purple-300 text-sm">{org.description}</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${getTypeBadgeColor(org.type)}`}>
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${getTypeBadge(org.type)}`}>
                     {org.type}
                   </span>
-                  <span className="text-gray-400 text-sm">
+                  <span className="text-purple-400 text-sm">
                     {new Date(org.created_at).toLocaleDateString()}
                   </span>
                 </div>

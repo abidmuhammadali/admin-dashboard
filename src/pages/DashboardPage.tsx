@@ -26,15 +26,31 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-bold text-gray-900">Admin Dashboard</h1>
+    <div className="min-h-screen relative overflow-hidden"
+      style={{ background: 'linear-gradient(135deg, #0f0a1e 0%, #1a0533 50%, #0f0a1e 100%)' }}>
+
+      {/* Background circles */}
+      <div className="absolute top-0 right-0 w-96 h-96 rounded-full opacity-10"
+        style={{ background: 'radial-gradient(circle, #7c3aed, transparent)' }} />
+      <div className="absolute bottom-0 left-0 w-72 h-72 rounded-full opacity-10"
+        style={{ background: 'radial-gradient(circle, #a855f7, transparent)' }} />
+
+      {/* Header */}
+      <header className="relative z-10 border-b border-purple-900"
+        style={{ background: 'rgba(255,255,255,0.03)' }}>
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center"
+              style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)' }}>
+              <span className="text-sm">⚡</span>
+            </div>
+            <h1 className="text-xl font-bold text-white">Admin Dashboard</h1>
+          </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-600">{user?.email}</span>
+            <span className="text-purple-300 text-sm">{user?.email}</span>
             <button
               onClick={handleLogout}
-              className="bg-red-500 text-white px-4 py-2 rounded-md text-sm hover:bg-red-600"
+              className="px-4 py-2 rounded-xl text-sm text-white border border-purple-700 hover:border-purple-400 transition-all"
             >
               Sign Out
             </button>
@@ -42,39 +58,47 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-2">
-              Welcome back!
-            </h2>
-            <p className="text-gray-600 text-sm mb-4">
-              Logged in as {user?.email}
-            </p>
-            <Link
-              to="/organizations"
-              className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-700 inline-block"
-            >
-              View Organizations
-            </Link>
-          </div>
+      {/* Main */}
+      <main className="relative z-10 max-w-7xl mx-auto px-6 py-12">
+        <div className="mb-10">
+          <h2 className="text-4xl font-bold text-white mb-2">
+            Welcome back! 👋
+          </h2>
+          <p className="text-purple-300">
+            Manage your organizations from one place
+          </p>
+        </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-2">
-              Organizations
-            </h2>
-            <p className="text-3xl font-bold text-blue-600">
-              {organizations?.length || 0}
-            </p>
-            <p className="text-gray-500 text-sm mt-1">Total organizations</p>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3 mb-10">
+          <div className="rounded-2xl p-6 border border-purple-900"
+            style={{ background: 'rgba(255,255,255,0.05)' }}>
+            <p className="text-purple-300 text-sm mb-2">Total Organizations</p>
+            <p className="text-4xl font-bold text-white">{organizations?.length || 0}</p>
+          </div>
+          <div className="rounded-2xl p-6 border border-purple-900"
+            style={{ background: 'rgba(255,255,255,0.05)' }}>
+            <p className="text-purple-300 text-sm mb-2">Account</p>
+            <p className="text-white font-medium truncate">{user?.email}</p>
+          </div>
+          <div className="rounded-2xl p-6 border border-purple-900"
+            style={{ background: 'rgba(255,255,255,0.05)' }}>
+            <p className="text-purple-300 text-sm mb-2">Quick Actions</p>
             <Link
               to="/organizations/create"
-              className="mt-4 bg-green-600 text-white px-4 py-2 rounded-md text-sm hover:bg-green-700 inline-block"
+              className="inline-block px-4 py-2 rounded-xl text-sm font-medium text-white"
+              style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)' }}
             >
-              + Create New
+              + Create Organization
             </Link>
           </div>
         </div>
+
+        <Link
+          to="/organizations"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-medium text-white border border-purple-700 hover:border-purple-400 transition-all"
+        >
+          View All Organizations →
+        </Link>
       </main>
     </div>
   )
