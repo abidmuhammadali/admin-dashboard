@@ -1,2 +1,15 @@
-@import "tailwindcss/preflight" layer(base);
-@import "tailwindcss/utilities" layer(utilities);
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #0f0a1e;
+  color: #ffffff;
+  font-family: 'Inter', system-ui, sans-serif;
+}
