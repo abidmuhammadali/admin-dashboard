@@ -10,7 +10,7 @@ A full-stack admin dashboard built with React, TypeScript, and Supabase. Admins 
 ## Test Credentials
 
 - **Email:** abidmuhammadali0@gmail.com
-- **Password:** [your password here]
+- **Password:** TestAdmin123!
 
 ## Tech Stack
 
@@ -72,6 +72,7 @@ Run the SQL in supabase/migrations/schema.sql against your Supabase project.
 - Add role based permissions within organizations
 - Add end to end tests with Playwright
 - Add dark mode toggle
+- Add forgot password and reset password flow
 ## Environment
 
 - Node.js 18+
