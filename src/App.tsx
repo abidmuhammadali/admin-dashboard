@@ -3,6 +3,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
 import DashboardPage from './pages/DashboardPage'
+import OrganizationsPage from './pages/OrganizationsPage'
+import OrganizationDetailPage from './pages/OrganizationDetailPage'
+import CreateOrganizationPage from './pages/CreateOrganizationPage'
 import { useAuth } from './hooks/useAuth'
 
 const queryClient = new QueryClient()
@@ -24,6 +27,21 @@ function App() {
           <Route path="/" element={
             <ProtectedRoute>
               <DashboardPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/organizations" element={
+            <ProtectedRoute>
+              <OrganizationsPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/organizations/create" element={
+            <ProtectedRoute>
+              <CreateOrganizationPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/organizations/:id" element={
+            <ProtectedRoute>
+              <OrganizationDetailPage />
             </ProtectedRoute>
           } />
         </Routes>
