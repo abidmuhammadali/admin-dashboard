@@ -72,3 +72,7 @@ Run the SQL in supabase/migrations/schema.sql against your Supabase project.
 - Add role based permissions within organizations
 - Add end to end tests with Playwright
 - Add dark mode toggle
+## Environment
+
+- Node.js 18+
+- npm 9+
