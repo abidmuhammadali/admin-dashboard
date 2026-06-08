@@ -42,7 +42,7 @@ export default function DashboardPage() {
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center"
               style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)' }}>
-              <span className="text-sm">⚡</span>
+              <span className="text-2xl">✨</span>
             </div>
             <Link to="/" className="text-xl font-bold text-white hover:text-purple-300 transition-colors">
              Admin Dashoard</Link>
