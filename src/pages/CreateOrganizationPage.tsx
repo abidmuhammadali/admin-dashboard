@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
-import { Building2, ArrowLeft } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 
 export default function CreateOrganizationPage() {
   const { user } = useAuth()
