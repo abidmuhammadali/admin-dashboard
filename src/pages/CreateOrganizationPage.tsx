@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
+import { Building2, ArrowLeft } from 'lucide-react'
 
 export default function CreateOrganizationPage() {
   const { user } = useAuth()
@@ -12,7 +13,9 @@ export default function CreateOrganizationPage() {
     name: '',
     type: '',
     description: '',
-    school_district: ''
+    school_district: '',
+    industry: '',
+    cause_area: ''
   })
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
@@ -53,15 +56,18 @@ export default function CreateOrganizationPage() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link to="/organizations"
-              className="text-purple-300 hover:text-white text-sm transition-colors">
-              ← Back
+              className="text-purple-300 hover:text-white text-sm transition-colors flex items-center gap-1">
+              <ArrowLeft size={16} />
+              Back
             </Link>
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center"
                 style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)' }}>
-                <span className="text-sm">⚡</span>
+                <Building2 size={16} className="text-white" />
               </div>
-              <h1 className="text-xl font-bold text-white">Create Organization</h1>
+              <Link to="/" className="text-xl font-bold text-white hover:text-purple-300 transition-colors">
+                AdminDash
+              </Link>
             </div>
           </div>
         </div>
@@ -118,6 +124,7 @@ export default function CreateOrganizationPage() {
               </select>
             </div>
 
+            {/* Conditional field for School */}
             {form.type === 'School' && (
               <div>
                 <label className="block text-sm font-medium text-white mb-2">
@@ -133,6 +140,58 @@ export default function CreateOrganizationPage() {
                   placeholder="Enter school district"
                   required
                 />
+              </div>
+            )}
+
+            {/* Conditional field for Business */}
+            {form.type === 'Business' && (
+              <div>
+                <label className="block text-sm font-medium text-white mb-2">
+                  Industry
+                </label>
+                <select
+                  name="industry"
+                  value={form.industry}
+                  onChange={handleChange}
+                  className="w-full rounded-xl px-4 py-3 text-white border border-purple-700 focus:outline-none focus:border-purple-400"
+                  style={{ background: '#1a0533' }}
+                  required
+                >
+                  <option value="">Select an industry</option>
+                  <option value="Technology">💻 Technology</option>
+                  <option value="Healthcare">🏥 Healthcare</option>
+                  <option value="Finance">💰 Finance</option>
+                  <option value="Education">📚 Education</option>
+                  <option value="Retail">🛍️ Retail</option>
+                  <option value="Manufacturing">🏭 Manufacturing</option>
+                  <option value="Other">🔧 Other</option>
+                </select>
+              </div>
+            )}
+
+            {/* Conditional field for Nonprofit */}
+            {form.type === 'Nonprofit' && (
+              <div>
+                <label className="block text-sm font-medium text-white mb-2">
+                  Cause Area
+                </label>
+                <select
+                  name="cause_area"
+                  value={form.cause_area}
+                  onChange={handleChange}
+                  className="w-full rounded-xl px-4 py-3 text-white border border-purple-700 focus:outline-none focus:border-purple-400"
+                  style={{ background: '#1a0533' }}
+                  required
+                >
+                  <option value="">Select a cause area</option>
+                  <option value="Education">📚 Education</option>
+                  <option value="Environment">🌿 Environment</option>
+                  <option value="Health">❤️ Health</option>
+                  <option value="Poverty">🤝 Poverty Relief</option>
+                  <option value="Animals">🐾 Animal Welfare</option>
+                  <option value="Arts">🎨 Arts & Culture</option>
+                  <option value="Other">💫 Other</option>
+                </select>
               </div>
             )}
 

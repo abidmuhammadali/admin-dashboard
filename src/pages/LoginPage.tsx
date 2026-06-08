@@ -1,22 +1,35 @@
-import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+
+const loginSchema = z.object({
+  email: z.string().email('Please enter a valid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+})
+
+type LoginForm = z.infer<typeof loginSchema>
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
-  async function handleLogin(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setError
+  } = useForm<LoginForm>({
+    resolver: zodResolver(loginSchema)
+  })
+
+  async function onSubmit(data: LoginForm) {
+    const { error } = await supabase.auth.signInWithPassword({
+      email: data.email,
+      password: data.password
+    })
     if (error) {
-      setError(error.message)
-      setLoading(false)
+      setError('root', { message: error.message })
     } else {
       navigate('/')
     }
@@ -25,15 +38,13 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden"
       style={{ background: 'linear-gradient(135deg, #0f0a1e 0%, #1a0533 50%, #0f0a1e 100%)' }}>
-      
-      {/* Background circles */}
+
       <div className="absolute top-20 left-20 w-72 h-72 rounded-full opacity-20"
         style={{ background: 'radial-gradient(circle, #7c3aed, transparent)' }} />
       <div className="absolute bottom-20 right-20 w-96 h-96 rounded-full opacity-10"
         style={{ background: 'radial-gradient(circle, #a855f7, transparent)' }} />
 
       <div className="relative z-10 w-full max-w-md px-4">
-        {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4"
             style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)' }}>
@@ -43,30 +54,30 @@ export default function LoginPage() {
           <p className="text-white mt-2">Sign in to your admin dashboard</p>
         </div>
 
-        {/* Card */}
         <div className="rounded-2xl p-8 border border-purple-900"
           style={{ background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(10px)' }}>
 
-          {error && (
+          {errors.root && (
             <div className="bg-red-500 bg-opacity-20 border border-red-500 text-red-300 p-3 rounded-lg mb-4 text-sm">
-              {error}
+              {errors.root.message}
             </div>
           )}
 
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-white mb-2">
                 Email Address
               </label>
               <input
+                {...register('email')}
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 className="w-full rounded-xl px-4 py-3 text-white placeholder-purple-400 border border-purple-700 focus:outline-none focus:border-purple-400"
                 style={{ background: 'rgba(255,255,255,0.07)' }}
                 placeholder="admin@example.com"
-                required
               />
+              {errors.email && (
+                <p className="text-red-400 text-xs mt-1">{errors.email.message}</p>
+              )}
             </div>
 
             <div>
@@ -74,23 +85,24 @@ export default function LoginPage() {
                 Password
               </label>
               <input
+                {...register('password')}
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
                 className="w-full rounded-xl px-4 py-3 text-white placeholder-purple-400 border border-purple-700 focus:outline-none focus:border-purple-400"
                 style={{ background: 'rgba(255,255,255,0.07)' }}
                 placeholder="••••••••"
-                required
               />
+              {errors.password && (
+                <p className="text-red-400 text-xs mt-1">{errors.password.message}</p>
+              )}
             </div>
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={isSubmitting}
               className="w-full py-3 rounded-xl font-semibold text-white transition-all disabled:opacity-50"
               style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)' }}
             >
-              {loading ? 'Signing in...' : 'Sign In →'}
+              {isSubmitting ? 'Signing in...' : 'Sign In →'}
             </button>
           </form>
 

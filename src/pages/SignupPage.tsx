@@ -1,27 +1,37 @@
-import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+
+const signupSchema = z.object({
+  fullName: z.string().min(2, 'Full name must be at least 2 characters'),
+  email: z.string().email('Please enter a valid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+})
+
+type SignupForm = z.infer<typeof signupSchema>
 
 export default function SignupPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [fullName, setFullName] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
-  async function handleSignup(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setError
+  } = useForm<SignupForm>({
+    resolver: zodResolver(signupSchema)
+  })
+
+  async function onSubmit(data: SignupForm) {
     const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { full_name: fullName } }
+      email: data.email,
+      password: data.password,
+      options: { data: { full_name: data.fullName } }
     })
     if (error) {
-      setError(error.message)
-      setLoading(false)
+      setError('root', { message: error.message })
     } else {
       navigate('/')
     }
@@ -49,56 +59,68 @@ export default function SignupPage() {
         <div className="rounded-2xl p-8 border border-purple-900"
           style={{ background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(10px)' }}>
 
-          {error && (
+          {errors.root && (
             <div className="bg-red-500 bg-opacity-20 border border-red-500 text-red-300 p-3 rounded-lg mb-4 text-sm">
-              {error}
+              {errors.root.message}
             </div>
           )}
 
-          <form onSubmit={handleSignup} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-white mb-2">Full Name</label>
+              <label className="block text-sm font-medium text-white mb-2">
+                Full Name
+              </label>
               <input
+                {...register('fullName')}
                 type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
                 className="w-full rounded-xl px-4 py-3 text-white placeholder-purple-400 border border-purple-700 focus:outline-none focus:border-purple-400"
                 style={{ background: 'rgba(255,255,255,0.07)' }}
                 placeholder="John Doe"
-                required
               />
+              {errors.fullName && (
+                <p className="text-red-400 text-xs mt-1">{errors.fullName.message}</p>
+              )}
             </div>
+
             <div>
-              <label className="block text-sm font-medium text-white mb-2">Email Address</label>
+              <label className="block text-sm font-medium text-white mb-2">
+                Email Address
+              </label>
               <input
+                {...register('email')}
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 className="w-full rounded-xl px-4 py-3 text-white placeholder-purple-400 border border-purple-700 focus:outline-none focus:border-purple-400"
                 style={{ background: 'rgba(255,255,255,0.07)' }}
                 placeholder="admin@example.com"
-                required
               />
+              {errors.email && (
+                <p className="text-red-400 text-xs mt-1">{errors.email.message}</p>
+              )}
             </div>
+
             <div>
-              <label className="block text-sm font-medium text-white mb-2">Password</label>
+              <label className="block text-sm font-medium text-white mb-2">
+                Password
+              </label>
               <input
+                {...register('password')}
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
                 className="w-full rounded-xl px-4 py-3 text-white placeholder-purple-400 border border-purple-700 focus:outline-none focus:border-purple-400"
                 style={{ background: 'rgba(255,255,255,0.07)' }}
                 placeholder="••••••••"
-                required
               />
+              {errors.password && (
+                <p className="text-red-400 text-xs mt-1">{errors.password.message}</p>
+              )}
             </div>
+
             <button
               type="submit"
-              disabled={loading}
+              disabled={isSubmitting}
               className="w-full py-3 rounded-xl font-semibold text-white transition-all disabled:opacity-50"
               style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)' }}
             >
-              {loading ? 'Creating account...' : 'Create Account →'}
+              {isSubmitting ? 'Creating account...' : 'Create Account →'}
             </button>
           </form>
 

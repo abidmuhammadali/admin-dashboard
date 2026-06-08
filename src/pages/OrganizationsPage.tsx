@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
+import { Building2, Plus, Users, Calendar } from 'lucide-react'
 
 interface Organization {
   id: string
@@ -9,6 +10,7 @@ interface Organization {
   type: string
   description: string
   created_at: string
+  member_count?: number
 }
 
 export default function OrganizationsPage() {
@@ -20,11 +22,17 @@ export default function OrganizationsPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('organizations')
-        .select('*')
+        .select(`
+          *,
+          organization_members(count)
+        `)
         .eq('created_by', user?.id)
         .order('created_at', { ascending: false })
       if (error) throw error
-      return data as Organization[]
+      return data.map((org: any) => ({
+        ...org,
+        member_count: org.organization_members[0]?.count || 0
+      })) as Organization[]
     },
     enabled: !!user
   })
@@ -60,7 +68,8 @@ export default function OrganizationsPage() {
               <span className="text-sm">⚡</span>
             </div>
             <Link to="/" className="text-xl font-bold text-white hover:text-purple-300 transition-colors">
-             Admin Dashboard</Link>
+              AdminDash
+            </Link>
           </div>
           <div className="flex items-center gap-4">
             <span className="text-purple-300 text-sm">{user?.email}</span>
@@ -82,10 +91,11 @@ export default function OrganizationsPage() {
           </div>
           <Link
             to="/organizations/create"
-            className="px-6 py-3 rounded-xl font-medium text-white"
+            className="px-6 py-3 rounded-xl font-medium text-white flex items-center gap-2"
             style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)' }}
           >
-            + Create New
+            <Plus size={18} />
+            Create New
           </Link>
         </div>
 
@@ -121,16 +131,24 @@ export default function OrganizationsPage() {
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold text-white mb-1">{org.name}</h3>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Building2 size={20} className="text-purple-400" />
+                    <h3 className="text-lg font-semibold text-white">{org.name}</h3>
+                  </div>
                   <p className="text-purple-300 text-sm">{org.description}</p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-1 text-purple-300 text-sm">
+                    <Users size={16} />
+                    <span>{org.member_count} members</span>
+                  </div>
                   <span className={`px-3 py-1 rounded-full text-xs font-medium ${getTypeBadge(org.type)}`}>
                     {org.type}
                   </span>
-                  <span className="text-purple-400 text-sm">
-                    {new Date(org.created_at).toLocaleDateString()}
-                  </span>
+                  <div className="flex items-center gap-1 text-purple-400 text-sm">
+                    <Calendar size={16} />
+                    <span>{new Date(org.created_at).toLocaleDateString()}</span>
+                  </div>
                 </div>
               </div>
             </div>
