@@ -45,7 +45,7 @@ export default function DashboardPage() {
               <span className="text-2xl">✨</span>
             </div>
             <Link to="/" className="text-xl font-bold text-white hover:text-purple-300 transition-colors">
-             Admin Dashoard</Link>
+             Admin Dashboard</Link>
           </div>
           <div className="flex items-center gap-4">
             <span className="text-purple-300 text-sm">{user?.email}</span>
